@@ -21,13 +21,13 @@ public class DemoApplication {
 	CommandLineRunner run(RoleRepository roleRepository, UserService userService) {
 		return args -> {
 			roleRepository.save(new Role(1L, "USER"));
-			User u = new User();
-			u.setFirstName("Jill");
-			u.setLastName("Cassidy");
-			u.setEmail("jill.cassidy@example.com");  // Set email
-			u.setUsername("jillcassidy");  // Ensure the username is also set
-			u.setPassword("StrongPassword1!");  // Set a valid password
-			userService.registerUser(u);
+			// User u = new User();
+			// u.setFirstName("Jill");
+			// u.setLastName("Cassidy");
+			// u.setEmail("jill.cassidy@example.com");  // Set email
+			// u.setUsername("jillcassidy");  // Ensure the username is also set
+			// u.setPassword("StrongPassword1!");  // Set a valid password
+			// userService.registerUser(u);
 		};
 	}
 
