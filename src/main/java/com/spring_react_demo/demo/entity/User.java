@@ -34,18 +34,18 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @NotNull(message = "{demo.constraint.username.NotNull.message}")
-    @Column(name = "username", unique = true, nullable = false)
+    //@NotNull(message = "{demo.constraint.username.NotNull.message}")
+    @Column(name = "username", unique = true/*, nullable = false */)
     private String username;
 
-    @NotNull
+    //@NotNull
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,}$", 
             message = "{demo.constraint.password.Pattern.message}")
-    @JsonIgnore
-    @Column(name = "password", nullable = false)
+    // @JsonIgnore
+    @Column(name = "password"/*, nullable = false*/)
     private String password;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", unique = true/* , nullable = false*/)
     private String email;
 
     @Column(name = "phone_number")
