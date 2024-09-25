@@ -9,6 +9,7 @@ import com.spring_react_demo.demo.dto.UserRegistrationDTO;
 import com.spring_react_demo.demo.entity.Role;
 import com.spring_react_demo.demo.entity.User;
 import com.spring_react_demo.demo.exception.EmailAlreadyTakenException;
+import com.spring_react_demo.demo.exception.UserDoesNotExistException;
 import com.spring_react_demo.demo.repository.RoleRepository;
 import com.spring_react_demo.demo.repository.UserRepository;
 
@@ -63,6 +64,19 @@ public class UserService {
     private String generateUsername(String name) {
         long generatedNumber = (long) Math.floor(Math.random() * 1_000_000_000);
         return name + generatedNumber;
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(UserDoesNotExistException::new);
+    }
+
+    public User updateUser(User user) {
+        
+        try {
+            return userRepository.save(user);
+        } catch(Exception e) {
+            throw new EmailAlreadyTakenException();
+        }
     }
 
 }
