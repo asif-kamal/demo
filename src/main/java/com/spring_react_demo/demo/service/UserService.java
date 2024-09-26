@@ -71,12 +71,21 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        
+
         try {
             return userRepository.save(user);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new EmailAlreadyTakenException();
         }
     }
 
+    public void generateUserVerification(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(UserDoesNotExistException::new);
+        user.setVerification(generateVerificationNumber());
+        userRepository.save(user);
+    }
+
+    private Long generateVerificationNumber() {
+        return (long) Math.floor(Math.random() * 100_000_000);
+    }
 }
