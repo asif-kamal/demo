@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,6 +55,13 @@ public class AuthenticationController {
         user.setPhoneNumber(phone);
 
         return userService.updateUser(user);
+    }
+
+    @PostMapping("/email/code")
+    public ResponseEntity<String> createEmailVerification(@RequestBody LinkedHashMap<String, String> body) {
+        userService.generateUserVerification(body.get("username"));
+
+        return new ResponseEntity<String>("Verification code generated and email sent", HttpStatus.OK);
     }
 
 }
