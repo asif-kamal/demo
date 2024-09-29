@@ -75,8 +75,7 @@ public class GmailConfiguration {
                 .build();
             
         } catch (GeneralSecurityException | IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new IllegalStateException("Failed to create Gmail service: " + e.getMessage(), e);
         }
     }
 }
