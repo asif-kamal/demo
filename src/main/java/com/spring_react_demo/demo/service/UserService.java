@@ -9,6 +9,7 @@ import com.spring_react_demo.demo.dto.UserRegistrationDTO;
 import com.spring_react_demo.demo.entity.Role;
 import com.spring_react_demo.demo.entity.User;
 import com.spring_react_demo.demo.exception.EmailAlreadyTakenException;
+import com.spring_react_demo.demo.exception.EmailFailedToSendException;
 import com.spring_react_demo.demo.exception.UserDoesNotExistException;
 import com.spring_react_demo.demo.repository.RoleRepository;
 import com.spring_react_demo.demo.repository.UserRepository;
@@ -21,6 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final GmailService gmailService;
 
     public User registerUser(UserRegistrationDTO userRegDTO) {
 
@@ -82,7 +84,16 @@ public class UserService {
     public void generateUserVerification(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(UserDoesNotExistException::new);
         user.setVerification(generateVerificationNumber());
-        userRepository.save(user);
+
+        try {
+            gmailService.sendEmail(user.getEmail(), "Your verification code",
+                    "Here is your verification code: " + user.getVerification());
+            userRepository.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EmailFailedToSendException();
+        }
+        //userRepository.save(user);
     }
 
     private Long generateVerificationNumber() {
