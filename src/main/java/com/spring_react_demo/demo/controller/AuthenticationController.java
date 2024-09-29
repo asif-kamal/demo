@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.spring_react_demo.demo.dto.UserRegistrationDTO;
 import com.spring_react_demo.demo.entity.User;
 import com.spring_react_demo.demo.exception.EmailAlreadyTakenException;
+import com.spring_react_demo.demo.exception.EmailFailedToSendException;
 import com.spring_react_demo.demo.exception.UserDoesNotExistException;
 import com.spring_react_demo.demo.service.UserService;
 
@@ -55,6 +56,11 @@ public class AuthenticationController {
         user.setPhoneNumber(phone);
 
         return userService.updateUser(user);
+    }
+
+    @ExceptionHandler({EmailFailedToSendException.class})
+    public ResponseEntity<String> handleFailedEmail() {
+        return new ResponseEntity<String>("Email failed to send, try again in a minute", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/email/code")
