@@ -16,6 +16,7 @@ import com.spring_react_demo.demo.dto.UserRegistrationDTO;
 import com.spring_react_demo.demo.entity.User;
 import com.spring_react_demo.demo.exception.EmailAlreadyTakenException;
 import com.spring_react_demo.demo.exception.EmailFailedToSendException;
+import com.spring_react_demo.demo.exception.IncorrectVerificationCodeException;
 import com.spring_react_demo.demo.exception.UserDoesNotExistException;
 import com.spring_react_demo.demo.service.UserService;
 
@@ -40,7 +41,7 @@ public class AuthenticationController {
         return userService.registerUser(userRegDTO);
     }
 
-    @ExceptionHandler({UserDoesNotExistException.class})
+    @ExceptionHandler({ UserDoesNotExistException.class })
     public ResponseEntity<String> handleUserDoesNotExist() {
         return new ResponseEntity<String>("The user you are looking for does not exist", HttpStatus.NOT_FOUND);
     }
@@ -58,9 +59,10 @@ public class AuthenticationController {
         return userService.updateUser(user);
     }
 
-    @ExceptionHandler({EmailFailedToSendException.class})
+    @ExceptionHandler({ EmailFailedToSendException.class })
     public ResponseEntity<String> handleFailedEmail() {
-        return new ResponseEntity<String>("Email failed to send, try again in a minute", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<String>("Email failed to send, try again in a minute",
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/email/code")
@@ -70,4 +72,25 @@ public class AuthenticationController {
         return new ResponseEntity<String>("Verification code generated and email sent", HttpStatus.OK);
     }
 
+    @ExceptionHandler({IncorrectVerificationCodeException.class})
+    public ResponseEntity<String> incorrectCodeHandler() {
+        return new ResponseEntity<String>("The code provided does not match the verification code", HttpStatus.CONFLICT);
+    }
+
+    @PostMapping("/email/verify")
+    public User verifyEmail(@RequestBody LinkedHashMap<String, String> body) {
+
+        Long code = Long.parseLong(body.get("code"));
+        String username = body.get("username");
+
+        return userService.verifyEmail(username, code);
+    }
+
+    @PutMapping("/update/password")
+    public User updatePassword(@RequestBody LinkedHashMap<String, String> body) {
+        String username = body.get("username");
+        String password = body.get("password");
+
+        return userService.setPassword(username, password);
+    }
 }
