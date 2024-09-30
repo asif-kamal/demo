@@ -3,6 +3,7 @@ package com.spring_react_demo.demo.service;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.spring_react_demo.demo.dto.UserRegistrationDTO;
@@ -10,6 +11,7 @@ import com.spring_react_demo.demo.entity.Role;
 import com.spring_react_demo.demo.entity.User;
 import com.spring_react_demo.demo.exception.EmailAlreadyTakenException;
 import com.spring_react_demo.demo.exception.EmailFailedToSendException;
+import com.spring_react_demo.demo.exception.IncorrectVerificationCodeException;
 import com.spring_react_demo.demo.exception.UserDoesNotExistException;
 import com.spring_react_demo.demo.repository.RoleRepository;
 import com.spring_react_demo.demo.repository.UserRepository;
@@ -23,6 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final GmailService gmailService;
+    private final PasswordEncoder passwordEncoder;
 
     public User registerUser(UserRegistrationDTO userRegDTO) {
 
@@ -93,10 +96,31 @@ public class UserService {
             e.printStackTrace();
             throw new EmailFailedToSendException();
         }
-        //userRepository.save(user);
+        // userRepository.save(user);
     }
 
     private Long generateVerificationNumber() {
         return (long) Math.floor(Math.random() * 100_000_000);
+    }
+
+    public User verifyEmail(String username, Long code) {
+        User user = userRepository.findByUsername(username).orElseThrow(UserDoesNotExistException::new);
+
+        if (code.equals(user.getVerification())) {
+            user.setEnabled(true);
+            user.setVerification(null);
+            return userRepository.save(user);
+        } else {
+            throw new IncorrectVerificationCodeException();
+        }
+    }
+
+    public User setPassword(String username, String password) {
+
+        User user = userRepository.findByUsername(username).orElseThrow(UserDoesNotExistException::new);
+        String encodedPassword = passwordEncoder.encode(password);
+        user.setPassword(encodedPassword);
+
+        return userRepository.save(user);
     }
 }
