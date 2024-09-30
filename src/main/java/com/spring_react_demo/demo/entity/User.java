@@ -37,7 +37,7 @@ public class User {
 
     // @NotNull
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,}$", message = "{demo.constraint.password.Pattern.message}")
-    //@JsonIgnore
+    @JsonIgnore
     @Column(name = "password"/* , nullable = false */)
     private String password;
 
